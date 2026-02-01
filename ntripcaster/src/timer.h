@@ -9,7 +9,6 @@
  *
  * Designed by Informatik Centrum Dortmund http://www.icd.de
  *
- * NTRIP is currently an experimental technology.
  * The BKG disclaims any liability nor responsibility to any person or entity
  * with respect to any loss or damage caused, or alleged to be caused,
  * directly or indirectly by the use and application of the NTRIP technology.
@@ -25,7 +24,7 @@
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
+ * as published by the Free Software Foundation; either version 3
  * of the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -34,14 +33,16 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef ICECAST_TIMER_H
-#define ICECAST_TIMER_H
+#ifndef NTRIPCASTER_TIMER_H
+#define NTRIPCASTER_TIMER_H
 
 void *startup_timer_thread(void *arg);
+void *startup_heartbeat_thread(void *arg);
+void *startup_udp_info_thread (void *arg);
+void *startup_relay_connector_thread(void *arg);
 void status_write(server_info_t *info);
 void get_hourly_stats(statistics_t *stat);
 void write_hourly_stats(statistics_t *stat);
@@ -54,8 +55,16 @@ void get_current_stats(statistics_t *stat);
 void get_current_stats_proc (statistics_t *stat, int lock);
 void get_running_stats(statistics_t *stat);
 void get_running_stats_proc (statistics_t *stat, int lock);
+void get_running_stats_nl (statistics_t *stat);
 void add_stats(statistics_t *target, statistics_t *source, unsigned long int factor);
+void *startup_relay_connector_thread(void *arg);
+void *startup_watchdog_thread(void *arg); // added. ajd
+//int udp_update_metainfo (SOCKET s, connection_t *sourcecon, connection_t *clicon);
+//void timer_update_stats_files (time_t stime);
+//void timer_handle_directory_servers (time_t stime);
 void timer_handle_status_lines (time_t stime);
 void timer_handle_transfer_statistics (time_t stime, time_t *trottime, time_t *justone, statistics_t *trotstat);
+void timer_kick_abandoned_relays (time_t stime);
+void timer_check_date();
 #endif
 
