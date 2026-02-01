@@ -1,5 +1,14 @@
 # BKG's Open Source NTRIP Caster Running Under Docker
 
+## QUICK START
+
+
+```sh
+docker build -t ntripcaster .
+docker run -p 8080:8080 -p 2101:2101 ntripcaster
+```
+
+## OTHER STUFF
 This repository contains the BKG NTRIP caster set up to run under docker.
 
 NTRIP was invented by the German organisation Bundesamt für Kartographieund Geodäsie (BKG) - 
