@@ -1,4 +1,4 @@
-FROM ubuntu:18.04 as builder
+FROM ubuntu:22.04 AS builder
 
 COPY ntripcaster /ntripcaster
 
@@ -10,11 +10,20 @@ RUN ./configure
 
 RUN make install
 
-# The builder image is dumped and a fresh image is used
-# just with the built binary, config and logs made from 'make install'
-FROM ubuntu:18.04
-COPY --from=builder /usr/local/ntripcaster/ /usr/local/ntripcaster/
+RUN cp /usr/local/ntripcaster/conf/ntripcaster.conf.dist /usr/local/ntripcaster/conf/ntripcaster.conf && \
+    cp /usr/local/ntripcaster/conf/sourcetable.dat.dist /usr/local/ntripcaster/conf/sourcetable.dat && \
+    sed -i '/^port 80$/d' /usr/local/ntripcaster/conf/ntripcaster.conf
 
-EXPOSE 2101
-WORKDIR /usr/local/ntripcaster/logs
-CMD /usr/local/ntripcaster/bin/ntripcaster
+FROM ubuntu:22.04
+
+RUN apt-get update && apt-get install -y nginx && rm -rf /var/lib/apt/lists/*
+
+COPY --from=builder /usr/local/ntripcaster/ /usr/local/ntripcaster/
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
+EXPOSE 8080 2101
+WORKDIR /usr/local/ntripcaster
+
+CMD ["/start.sh"]
